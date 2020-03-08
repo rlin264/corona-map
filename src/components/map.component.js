@@ -1,7 +1,6 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 import mapboxgl from 'mapbox-gl';
-import {BrowserRouter as Router, Route} from "react-router-dom";
+import {BrowserRouter as Router} from "react-router-dom";
 import Navbar from "./navbar.component";
 import "bootstrap/dist/css/bootstrap.min.css";
 import axios from 'axios';
@@ -30,45 +29,38 @@ export default class Map extends React.Component {
         });
 
         async function getPlaces(){
-            // const res = await fetch('/places');
-            // console.log("fectched");
-            // const data = await res.json();
-            // console.log("ASDA");
             axios.get(URL + '/places')
                 .then(response => {
-                    console.log(response.data);
-                    let places = response.data.map(place => (
-                        {
+                    let places = response.data.data.map(place => {
+                        return {
                             type: 'Feature',
                             geometry:{
                                 type: 'Point',
-                                coordinates: [place.location.coordinates[0], place.location.coordinates[1]]
+                                coordinates: [
+                                    place.location.coordinates[0], 
+                                    place.location.coordinates[1]
+                                ]
                             },
                             properties:{
                                 city: place.location.city
                             }
                         }
-                    ));
-                    
-                    return places;
+                    });
+                    showMap(places);
                 })
                 .catch((error)=>{
                     console.log(error);
                 })
         }
 
-        async function showMap() {
-            let places = await getPlaces();
-        
+        async function showMap(places) {
             map.on('load', () => {
-        
                 map.addSource('places', {
                     type: 'geojson',
                     data: {
                         type: 'FeatureCollection',
                         features: places
                     }
-                    // data: 'https://docs.mapbox.com/mapbox-gl-js/assets/earthquakes.geojson'
                 });
         
                 map.addLayer({
@@ -89,147 +81,41 @@ export default class Map extends React.Component {
                         "text-color": "#00d1b2",
                     },
                 });
-                map.addLayer({
-                    id: 'clusters',
-                    type: 'circle',
-                    source: 'places',
-                    filter: ['has', 'point_count'],
-                    paint: {
-                        // Use step expressions (https://docs.mapbox.com/mapbox-gl-js/style-spec/#expressions-step)
-                        // with three steps to implement three types of circles:
-                        //   * Blue, 20px circles when point count is less than 100
-                        //   * Yellow, 30px circles when point count is between 100 and 750
-                        //   * Pink, 40px circles when point count is greater than or equal to 750
-                        'circle-color': [
-                            'step',
-                            ['get', 'point_count'],
-                            '#51bbd6',
-                            100,
-                            '#f1f075',
-                            750,
-                            '#f28cb1'
-                        ],
-                        'circle-radius': [
-                            'step',
-                            ['get', 'point_count'],
-                            20,
-                            100,
-                            30,
-                            750,
-                            40
-                        ]
-                    }
-                });
+                // map.addLayer({
+                //     id: 'clusters',
+                //     type: 'circle',
+                //     source: 'places',
+                //     filter: ['has', 'point_count'],
+                //     paint: {
+                //         // Use step expressions (https://docs.mapbox.com/mapbox-gl-js/style-spec/#expressions-step)
+                //         // with three steps to implement three types of circles:
+                //         //   * Blue, 20px circles when point count is less than 100
+                //         //   * Yellow, 30px circles when point count is between 100 and 750
+                //         //   * Pink, 40px circles when point count is greater than or equal to 750
+                //         'circle-color': [
+                //             'step',
+                //             ['get', 'point_count'],
+                //             '#51bbd6',
+                //             100,
+                //             '#f1f075',
+                //             750,
+                //             '#f28cb1'
+                //         ],
+                //         'circle-radius': [
+                //             'step',
+                //             ['get', 'point_count'],
+                //             20,
+                //             100,
+                //             30,
+                //             750,
+                //             40
+                //         ]
+                //     }
+                // });
             });    
 
         };
-
-        showMap();
-        
-        var geojson = {
-            "features": [
-                {
-                    "type": "Feature",
-                    "properties": {
-                        "title": "Lincoln Park",
-                        "description": "A northside park that is home to the Lincoln Park Zoo"
-                    },
-                    "geometry": {
-                        "coordinates": [-87.637596, 41.940403],
-                        "type": "Point"
-                    }
-                },
-                {
-                    "type": "Feature",
-                    "properties": {
-                        "title": "Burnham Park",
-                        "description": "A lakefront park on Chicago's south side"
-                    },
-                    "geometry": {
-                        "coordinates": [-87.603735, 41.829985],
-                        "type": "Point"
-                    }
-                },
-                {
-                    "type": "Feature",
-                    "properties": {
-                        "title": "Millennium Park",
-                        "description": "A downtown park known for its art installations and unique architecture"
-                    },
-                    "geometry": {
-                        "coordinates": [-87.622554, 41.882534],
-                        "type": "Point"
-                    }
-                },
-                {
-                    "type": "Feature",
-                    "properties": {
-                        "title": "Grant Park",
-                        "description": "A downtown park that is the site of many of Chicago's favorite festivals and events"
-                    },
-                    "geometry": {
-                        "coordinates": [-87.619185, 41.876367],
-                        "type": "Point"
-                    }
-                },
-                {
-                    "type": "Feature",
-                    "properties": {
-                        "title": "Humboldt Park",
-                        "description": "A large park on Chicago's northwest side"
-                    },
-                    "geometry": {
-                        "coordinates": [-87.70199, 41.905423],
-                        "type": "Point"
-                    }
-                },
-                {
-                    "type": "Feature",
-                    "properties": {
-                        "title": "Douglas Park",
-                        "description": "A large park near in Chicago's North Lawndale neighborhood"
-                    },
-                    "geometry": {
-                        "coordinates": [-87.699329, 41.860092],
-                        "type": "Point"
-                    }
-                },
-                {
-                    "type": "Feature",
-                    "properties": {
-                        "title": "Calumet Park",
-                        "description": "A park on the Illinois-Indiana border featuring a historic fieldhouse"
-                    },
-                    "geometry": {
-                        "coordinates": [-87.530221, 41.715515],
-                        "type": "Point"
-                    }
-                },
-                {
-                    "type": "Feature",
-                    "properties": {
-                        "title": "Jackson Park",
-                        "description": "A lakeside park that was the site of the 1893 World's Fair"
-                    },
-                    "geometry": {
-                        "coordinates": [-87.580389, 41.783185],
-                        "type": "Point"
-                    }
-                },
-                {
-                    "type": "Feature",
-                    "properties": {
-                        "title": "Columbus Park",
-                        "description": "A large park in Chicago's Austin neighborhood"
-                    },
-                    "geometry": {
-                        "coordinates": [-87.769775, 41.873683],
-                        "type": "Point"
-                    }
-                }
-            ],
-            "type": "FeatureCollection"
-        };
+        getPlaces();
 
         map.on('move', () => {
             this.setState({
