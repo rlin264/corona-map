@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="JavaScriptLibraryMappings">
+    <file url="PROJECT" libraries="{1d55aa3897f15d17caf21dc39b85b663, GoogleMapReact, react, react-dom}" />
+  </component>
+</project>
