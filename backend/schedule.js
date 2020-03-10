@@ -28,28 +28,33 @@ async function scrapeSite() {
     /* Go to the IMDB Movie page and wait for it to load */
     await page.goto(bno);
     /* Run javascript inside of the page */
-    console.log('step');
-    // await page.waitFor('tr');
-    // console.log('ASD');
 
     let data = await page.evaluate(() => {
-        let table = document.querySelector('table');
+        let table = document.querySelector('table > tbody');
         // let table = document;
         console.log(table);
         let rows = Array.from(table.children);
+        console.log(rows);
             
-        // let info = rows.map(rows => {
-        //     let title = rows.querySelector("tr").textContent;
-        //     // let datetime = rows.querySelector(".datetime").textContent;
-        //     // let episode_download_page = rows_panel
-        //     //   .querySelector(".download")
-        //     //   .getAttribute("href");
-        //     return { title, datetime, episode_download_page };
-        // });
-        // console.log(info);
+        info = [];
+
+        for(var i = 6; i < rows.length-2; i++){
+            info.push([
+                rows[i].children[1].innerText, 
+                rows[i].children[2].innerText,
+                rows[i].children[3].innerText,
+                rows[i].children[4].innerText,
+                rows[i].children[5].innerText,
+                rows[i].children[6].innerText,
+            ]);
+        }
+        return info;
+
+        
     });
-    // await browser.close();
-    // return info;
+    await browser.close();
+    console.log(data);
+    return data;
    
 
     // let data = await page.evaluate(() => {
