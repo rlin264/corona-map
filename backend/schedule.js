@@ -19,10 +19,10 @@ const PATHS = {
 
 async function scrapeSite() {
     const browser = await puppeteer.launch({
-                        // headless: true,
+                        headless: true,
                         executablePath: PATHS[process.platform].executablePath,
                         userDataDir: PATHS.win32.userDataDir,
-                        headless: false,
+                        // headless: false,
                     });
     const page = await browser.newPage();
     /* Go to the IMDB Movie page and wait for it to load */
@@ -55,24 +55,7 @@ async function scrapeSite() {
     await browser.close();
     console.log(data);
     return data;
-   
-
-    // let data = await page.evaluate(() => {
-    //     // let title = document.querySelector('table[class="waffle no-grid] > tbody > tr[style=height: 39px]]) > td[class="s9"]').innerText;
-    //     let title = document.querySelector('td[class="s16"]').innerText;
-    //     console.log(title);
-    //     return {
-    //         title,
-    //         // rating,
-    //         // ratingCountg
-    //     }
-    //     // console.log(title);
-    // //   let rating = document.querySelector('span[itemprop="ratingValue"]').innerText;
-    // //   let ratingCount = document.querySelector('span[itemprop="ratingCount"]').innerText;
-    //   /* Returning an object filled with the scraped data */
-    // });
-    // /* Outputting what we scraped */
-    // console.log(data);
-    // await browser.close();
 }
-scrapeSite();
+
+data = scrapeSite();
+console.log(data);
