@@ -59,7 +59,7 @@ async function scrapeSite() {
     //     return {
     //         title,
     //         // rating,
-    //         // ratingCount
+    //         // ratingCountg
     //     }
     //     // console.log(title);
     // //   let rating = document.querySelector('span[itemprop="ratingValue"]').innerText;
