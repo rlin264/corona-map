@@ -23,10 +23,11 @@ export default class Map extends React.Component {
     componentDidMount() {
         const map = new mapboxgl.Map({
             container: this.mapContainer,
-            style: 'mapbox://styles/mapbox/streets-v11',
+            style: 'mapbox://styles/mapbox/light-v10',
             center: [this.state.lng, this.state.lat],
             zoom: this.state.zoom
         });
+        map.addControl(new mapboxgl.NavigationControl());
 
         async function getPlaces(){
             axios.get(URL + '/places')
@@ -42,7 +43,8 @@ export default class Map extends React.Component {
                                 ]
                             },
                             properties:{
-                                city: place.location.city
+                                city: place.location.city,
+                                count: place.count,
                             }
                         }
                     });
@@ -60,60 +62,102 @@ export default class Map extends React.Component {
                     data: {
                         type: 'FeatureCollection',
                         features: places
+                    },
+                    cluster: true,
+                    clusterMaxZoom: 6,
+                    clusterRadius: 50,
+                    clusterProperties:{
+                        count: ['+', ['get', 'count']]
                     }
                 });
-        
                 map.addLayer({
-                    id: 'points',
-                    type: 'symbol',
-                    minzoom: 0,
+                    id: 'clusters',
+                    type: 'circle',
                     source: 'places',
-                    layout: {
-                        'icon-image': 'marker-15',
-                        'icon-allow-overlap': true,
-                        'text-allow-overlap': true,
-                        'icon-size': 2,
-                        'text-field': '{city}',
-                        'text-offset': [0, 0.9],
-                        'text-anchor': 'top'
-                    },
+                    filter: ['has', 'point_count'],
                     paint: {
-                        "text-color": "#00d1b2",
+                        // Use step expressions (https://docs.mapbox.com/mapbox-gl-js/style-spec/#expressions-step)
+                        // with three steps to implement three types of circles:
+                        //   * Blue, 20px circles when point count is less than 100
+                        //   * Yellow, 30px circles when point count is between 100 and 750
+                        //   * Pink, 40px circles when point count is greater than or equal to 750
+                        'circle-color': [
+                            'step',
+                            ['get', 'count'],
+                            '#51bbd6',
+                            100,
+                            '#f1f075',
+                            750,
+                            '#f28cb1'
+                        ],
+                        'circle-radius': [
+                            'step',
+                            ['get', 'count'],
+                            20,
+                            100,
+                            30,
+                            750,
+                            40
+                        ]
+                    }
+                }); 
+                map.addLayer({
+                    id: 'cluster-count',
+                    type: 'symbol',
+                    source: 'places',
+                    filter: ['has', 'count'],
+                    layout: {
+                        'text-field': '{count}',
+                        'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
+                        'text-size': 12
+                    }
+                });
+                map.addLayer({
+                    id: 'unclustered-point',
+                    type: 'circle',
+                    source: 'places',
+                    filter: ['!has', 'point_count'],
+                    paint: {
+                        'circle-color': [
+                            'step',
+                            ['get', 'count'],
+                            '#51bbd6',
+                            100,
+                            '#f1f075',
+                            750,
+                            '#f28cb1'
+                        ],
+                        'circle-radius': [
+                            'step',
+                            ['get', 'count'],
+                            20,
+                            100,
+                            30,
+                            750,
+                            40
+                        ]
                     },
                 });
-                // map.addLayer({
-                //     id: 'clusters',
-                //     type: 'circle',
-                //     source: 'places',
-                //     filter: ['has', 'point_count'],
-                //     paint: {
-                //         // Use step expressions (https://docs.mapbox.com/mapbox-gl-js/style-spec/#expressions-step)
-                //         // with three steps to implement three types of circles:
-                //         //   * Blue, 20px circles when point count is less than 100
-                //         //   * Yellow, 30px circles when point count is between 100 and 750
-                //         //   * Pink, 40px circles when point count is greater than or equal to 750
-                //         'circle-color': [
-                //             'step',
-                //             ['get', 'point_count'],
-                //             '#51bbd6',
-                //             100,
-                //             '#f1f075',
-                //             750,
-                //             '#f28cb1'
-                //         ],
-                //         'circle-radius': [
-                //             'step',
-                //             ['get', 'point_count'],
-                //             20,
-                //             100,
-                //             30,
-                //             750,
-                //             40
-                //         ]
-                //     }
-                // });
-            });    
-
+                const count = ['get', 'count'];
+                map.addLayer({
+                    id: 'unclustered-count',
+                    type: 'symbol',
+                    source: 'places',
+                    filter: ['!has', 'point_count'],
+                    layout: {
+                        // 'text-field': ['get','count'],
+                        'text-field': ['case',  ['>=', count, 10000], 
+                                                    ['concat',['round',['/',count,1000]],'k'], 
+                                                ['>=', count, 1000],
+                                                    ['concat',['/',['round',['/',count,100]],10],'k'],
+                                                count
+                                            ],
+                        'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
+                        'text-size': 12,
+                        'icon-text-fit': 'both'
+                    }
+                });
+            });   
         };
         getPlaces();
 
@@ -128,7 +172,7 @@ export default class Map extends React.Component {
     }
     render() {
         return (
-            <div style={{height: '100vh'}}>
+            <div id='bigContainer'>
                 <div className='sidebarStyle'>
                     <div>Longitude: {this.state.lng} | Latitude: {this.state.lat} | Zoom: {this.state.zoom}</div>
                 </div>
