@@ -5,8 +5,9 @@ import Navbar from "./navbar.component";
 import "bootstrap/dist/css/bootstrap.min.css";
 import axios from 'axios';
 
-const URL = 'http://localhost:5000'
+const URL = 'http://localhost:8000'
 
+//TODO: ADD toggle for mapbox
 
 mapboxgl.accessToken = 'pk.eyJ1IjoicmxpbjI2NCIsImEiOiJjazdndzNlN2gwMDNnM2VwZWx0ZHdrZmwzIn0.65-lsnM81g2ZzfVLV6cgqQ';
 
@@ -28,7 +29,23 @@ export default class Map extends React.Component {
             zoom: this.state.zoom
         });
         map.addControl(new mapboxgl.NavigationControl());
-
+        const geolocate = new mapboxgl.GeolocateControl({
+            positionOptions: {
+                enableHighAccuracy: true
+            },
+            fitBoundsOptions:{
+                maxZoom: 8
+            },
+            trackUserLocation: false,
+            showAccuracyCircle: true,
+            showUserLocation: true
+        })
+        const geolocater = map.addControl(geolocate);
+        geolocater.on('load', ()=>{
+            geolocate._watchState = 'WAITING_ACTIVE';
+            navigator.geolocation.getCurrentPosition(geolocate._updateMarker);
+            // geolocate.trigger();
+        })
         async function getPlaces(){
             axios.get(URL + '/places')
                 .then(response => {
@@ -169,6 +186,30 @@ export default class Map extends React.Component {
             });
         });
 
+        map.on('click', 'clusters', function(e) {
+            var features = map.queryRenderedFeatures(e.point, {
+                                    layers: ['clusters']
+                                    });
+            var clusterId = features[0].properties.cluster_id;
+            map.getSource('places').getClusterExpansionZoom(clusterId, function(err, zoom) {
+                if (err) return;
+                map.easeTo({
+                    center: features[0].geometry.coordinates,
+                    zoom: zoom
+                });
+            });
+        });
+
+        map.on('click','unclustered-point', function(e){
+            console.log(e.features);
+        });
+
+        map.on('mouseenter', 'clusters', function() {
+            map.getCanvas().style.cursor = 'pointer';
+        });
+        map.on('mouseleave', 'clusters', function() {
+            map.getCanvas().style.cursor = '';
+        });
     }
     render() {
         return (

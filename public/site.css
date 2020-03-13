@@ -1,7 +1,18 @@
+#body {
+    width: 100%;
+    height: 100%;
+}
+
+.bigContainer{
+    min-height: 100%;
+    height: 100%;
+    width: 100%;
+}
+
 .mapContainer {
     position: relative;
-    height: inherit;
-    width: inherit;
+    height: 90vh;
+    width: auto;
 }
 
 .sidebarStyle {
