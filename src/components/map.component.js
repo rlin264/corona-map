@@ -82,7 +82,7 @@ export default class Map extends React.Component {
                     },
                     cluster: true,
                     clusterMaxZoom: 6,
-                    clusterRadius: 50,
+                    clusterRadius: 40,
                     clusterProperties:{
                         count: ['+', ['get', 'count']]
                     }
@@ -221,6 +221,12 @@ export default class Map extends React.Component {
                     <Navbar/>
                 </Router>
                 <div ref={el => this.mapContainer = el} className='mapContainer' />
+                <div className='map-overlay' id='news'>
+                    <h2>Local News</h2>
+                    <div id='pd'>
+                        <p>Hover over a state!</p>
+                    </div>
+                </div>
             </div>
         )
     }
