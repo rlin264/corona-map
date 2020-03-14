@@ -16,14 +16,11 @@ const PATHS = {
     },
 }
 
-// const url = 'https://news.google.com/search?q=montreal coronavirus'
-
 async function scrapeSite(url) {
     const browser = await puppeteer.launch({
                         headless: true,
                         executablePath: PATHS[process.platform].executablePath,
                         userDataDir: PATHS.win32.userDataDir,
-                        // headless: false,
     });
     const page = await browser.newPage();
     await page.goto(url);
@@ -32,13 +29,8 @@ async function scrapeSite(url) {
         var info = [];
         var offset = 0;
         for(var i = 0; i < 5; i++){
-            // console.log(articles[i].className.length);
             j = i+offset;
-            // console.log(articles[j].className.length);
-            // console.log(articles[j]);
             if(articles[j].className.length > 40){
-                // console.log(articles[i].childNodes[0].childNodes[0].childNodes[0].childNodes[0].src);
-                // console.log(articles[i].childNodes[0].childNodes[1].childNodes[3].childNodes[0].childNodes[3].innerText);
                 info.push({
                     title: articles[j].childNodes[0].childNodes[1].childNodes[1].innerText,
                     link:articles[j].childNodes[0].childNodes[1].childNodes[0].href,
@@ -62,10 +54,8 @@ async function scrapeSite(url) {
                 i = i-1;
             }
         }
-        // console.log(info);
         return info;
     }); 
-    // console.log(data);
     await browser.close();
     return data;
 }
