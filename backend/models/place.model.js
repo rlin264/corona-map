@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const geoCoder = require('../utils/geocoder');
 
 const PlaceSchema = new mongoose.Schema({
+    _id: String,
     address: {
         type: String,
         required: [true, 'Please add an address']
@@ -21,8 +22,8 @@ const PlaceSchema = new mongoose.Schema({
         type: Date,
         default: Date.now()
     },
-    count:{
-        type: Number,
+    cases:{
+        type: JSON,
         required: true
     }
 });

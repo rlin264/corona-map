@@ -17,6 +17,7 @@ const pointSchema = new Schema({
 })
 
 const citySchema = new Schema({
+    _id: String,
     name: String,
     location:{
         type: pointSchema,

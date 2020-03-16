@@ -8,10 +8,11 @@ router.route('/').get((req, res) =>{
 });
  
 router.route('/add').post((req, res) => {
+    const _id = req.body.name;
     const name = req.body.name;
     const location = req.body.location;
-
     const newCity = new City({
+        _id,
         name,
         location
     });
