@@ -8,7 +8,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import axios from 'axios';
 const geoCoder = require('../utils/geocoder');
 
-const URL = 'http://localhost:8000'
+const URL = ""
 
 //TODO: ADD toggle for mapbox
 
