@@ -10,12 +10,6 @@ router.route('/').post(async(req, res) => {
     const address = req.body.address;
     const cases = req.body.cases;
     const filter = {_id: _id};
-    // const loc = await geoCoder.geocode(address);
-    // const location = {
-    //     type: 'Point',
-    //     coordinates: [loc[0].longitude, loc[0].latitude],
-    //     formattedAddress: loc[0].formattedAddress
-    // };
 
     Place.count({_id:_id}, function(err, count){
         if(count > 0){
@@ -60,5 +54,10 @@ router.route('/:id').delete((req, res) => {
         .then(()=>res.json('Places deleted'))
         .catch(err => res.status(400).json('Error: ' + err));
 })
+router.route('/:id').get((req,res) => {
+    Place.findById(req.params.id)
+        .then(place => res.json(place))
+        .catch(err => res.status(400).json('Error: ' + err));
+});
 
 module.exports = router;

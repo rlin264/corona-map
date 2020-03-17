@@ -10,7 +10,7 @@ const world = "https://docs.google.com/spreadsheets/u/0/d/e/2PACX-1vR30F8lYP3jG7
 const usa = "https://docs.google.com/spreadsheets/u/0/d/e/2PACX-1vR30F8lYP3jG7YOq8es0PBpJIE5yvRVZffOyaqC0GgMBN6yt0Q-NI8pxS7hd1F9dYXnowSC6zpZmW9D/pubhtml/sheet?headers=false&gid=1902046093"
 const can = "https://docs.google.com/spreadsheets/u/0/d/e/2PACX-1vR30F8lYP3jG7YOq8es0PBpJIE5yvRVZffOyaqC0GgMBN6yt0Q-NI8pxS7hd1F9dYXnowSC6zpZmW9D/pubhtml/sheet?headers=false&gid=338130207"
 
-const ignore = ['Canada', 'United States', 'Diamond Princess', 'Grand Princess']
+const ignore = ['Canada', 'United States', 'Diamond Princess', 'Grand Princess', 'OTHER PLACES']
 
 const PATHS = {
     win32: {
@@ -50,43 +50,43 @@ async function scrapeSite(place) {
         // console.log(table);
         let rows = Array.from(table.children);
         // console.log(rows);
-            
         info = [];
 
-        for(var i = 6; i < rows.length-3; i++){
+        for(var i = 5; i < rows.length-3; i++){
             info.push({
                 state: rows[i].children[1].innerText, 
-                cases: parseInt(rows[i].children[2].innerText),
-                deaths: parseInt(rows[i].children[3].innerText),
-                serious: parseInt(rows[i].children[4].innerText),
-                critical: parseInt(rows[i].children[5].innerText),
-                recovered: parseInt(rows[i].children[6].innerText),
+                cases: parseInt(rows[i].children[2].innerText.replace(/,/g,'')),
+                deaths: parseInt(rows[i].children[3].innerText.replace(/,/g,'')),
+                serious: parseInt(rows[i].children[4].innerText.replace(/,/g,'')),
+                critical: parseInt(rows[i].children[5].innerText.replace(/,/g,'')),
+                recovered: parseInt(rows[i].children[6].innerText.replace(/,/g,'')),
             });
         }
         return info;
     });
     browser.close();
     // console.log(data);
-    // console.log('done');
-    putPlaces(data);
+    putPlaces(data, place);
     // return data;
 }
 
 async function putPlaces(data, place){
-    // console.log('putting');
-    // console.log(data)
+    var suf = ""
+    // console.log(place);
+    if(place === 'usa'){
+        suf = ",us"
+    }
     for(var i = 0; i < data.length; i++){
     // for(var i = 0; i < 1; i++){
-        // console.log(data[i]);
+        // console.log(data[i].state + suf);
         if(notIgnore(data[i],place)){
-            // console.log(i);
-            await axios.post(URL + '/places',{
-                address: data[i].state,
+            axios.post(URL + '/places',{
+                address: data[i].state + suf,
                 cases: data[i]
             })
             .catch(err => {
-                // console.log(data[i]);
-                console.log('Error: '+err)
+                console.log(data[i]);
+                console.log('Error1: '+err)
             });
         }
     }
@@ -104,8 +104,7 @@ function notIgnore(data, place){
 }
 
 (async () => {
-    data = scrapeSite('world');
-    // console.log(data);
-    // console.log(data[0]);
-    // putPlaces(data);
+    scrapeSite('world');
+    // scrapeSite('can');
+    // scrapeSite('usa');
 })()

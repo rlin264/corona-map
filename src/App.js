@@ -5,13 +5,12 @@ import "bootstrap/dist/css/bootstrap.min.css";
 // import Navbar from "./components/navbar.component";
 // import CitiesList from "./components/cities-list.component"
 import Map from "./components/map.component";
-import News from "./components/news.component";
+// import News from "./components/news.component";
 
 function App() {
     return(
         <Router>
             <Map/>
-            <News/>
         </Router>
     )
 }

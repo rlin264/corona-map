@@ -32,9 +32,11 @@ const PlaceSchema = new mongoose.Schema({
 PlaceSchema.pre(['save'], async function(next) {
     const loc = await geoCoder.geocode(this.address);
     var ind = 0;
-    if(this.address == 'Georgia'){
-        // console.log(loc);
+    if(this.address === 'Georgia'){
         ind = 1;
+    }
+    if(this.address === 'Washington,us'){
+        ind = 2;
     }
     this.location = {
         type: 'Point',
