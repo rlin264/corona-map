@@ -29,12 +29,17 @@ const PlaceSchema = new mongoose.Schema({
 });
 
 // Before saving, convert address to geoCode
-PlaceSchema.pre('save', async function(next) {
+PlaceSchema.pre(['save'], async function(next) {
     const loc = await geoCoder.geocode(this.address);
+    var ind = 0;
+    if(this.address == 'Georgia'){
+        // console.log(loc);
+        ind = 1;
+    }
     this.location = {
         type: 'Point',
-        coordinates: [loc[0].longitude, loc[0].latitude],
-        formattedAddress: loc[0].formattedAddress
+        coordinates: [loc[ind].longitude, loc[ind].latitude],
+        formattedAddress: loc[ind].formattedAddress
     };
 
     // Do not save address
