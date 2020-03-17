@@ -8,8 +8,6 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import axios from 'axios';
 const geoCoder = require('../utils/geocoder');
 
-const URL = ""
-
 //TODO: ADD toggle for mapbox
 
 function createInstance() {
@@ -64,7 +62,7 @@ export default class Map extends React.Component {
             // geolocate.trigger();
         })
         async function getPlaces(){
-            axios.get(URL + '/places')
+            axios.get('/places')
                 .then(response => {
                     console.log(response.data);
                     let places = response.data.map(place => {

@@ -8,8 +8,6 @@ var options = {
     maximumAge: 0
 };
 
-const URL = 'http://localhost:8000'
-
 export default class News extends React.Component {
     constructor(props) {
         super(props);
@@ -22,7 +20,7 @@ export default class News extends React.Component {
             geoCoder.reverse({lat: position.coords.latitude, lon: position.coords.longitude})
                 .then(function(res){
                     console.log(res[0].city);
-                    axios.post(URL + '/news',
+                    axios.post('/news',
                         {place:res[0].city}
                     )
                     .then(response => {
@@ -52,7 +50,7 @@ export default class News extends React.Component {
             if(this.props.location !== this.state.prevLocation){
                 this.setState({data: null});
                 this.setState(this.state);
-                axios.post(URL + '/news',
+                axios.post('/news',
                         {place: this.props.location}
                     )
                     .then(response => {
@@ -86,7 +84,7 @@ export default class News extends React.Component {
         if(this.props.location !== 'userLocation' && this.props.location !== this.state.prevLocation){
             this.setState({data: null}, ()=>{
                 console.log(this.props.location);
-                axios.post(URL + '/news',
+                axios.post('/news',
                                 {place: this.props.location}
                             )
                             .then(response => {
