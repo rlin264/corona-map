@@ -17,8 +17,8 @@ function NewsScraper(){
         const url = 'https://news.google.com/search?q='+place+' coronavirus'
         const browser = await puppeteer.launch({
                             headless: true,
-                            executablePath: PATHS[process.platform].executablePath,
-                            userDataDir: PATHS.win32.userDataDir,
+                            // executablePath: PATHS[process.platform].executablePath,
+                            // userDataDir: PATHS.win32.userDataDir,
                             devtools: false,
                             args: [
                                   '--disable-canvas-aa', // Disable antialiasing on 2d canvas
