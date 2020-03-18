@@ -3,6 +3,8 @@ const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
 
+
+console.log("STARTING SERVER");
 require('dotenv').config();
 
 const app = express();
