@@ -17,6 +17,7 @@ function NewsScraper(){
         const url = 'https://news.google.com/search?q='+place+' coronavirus'
         const browser = await puppeteer.launch({
                             headless: true,
+                            //uncomment lines below for local
                             // executablePath: PATHS[process.platform].executablePath,
                             // userDataDir: PATHS.win32.userDataDir,
                             devtools: false,
