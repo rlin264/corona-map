@@ -29,6 +29,7 @@
     "eject": "react-scripts eject",
     "heroku-postbuild": "npm install && npm run build"
   },
+  "engines" : { "node" : ">=0.12" },
   "eslintConfig": {
     "extends": "react-app"
   },
@@ -49,5 +50,5 @@
     "install-peers": "^1.0.3",
     "popper.js": "^1.16.1",
     "typescript": "^3.8.3"
-  }
+  },
 }
